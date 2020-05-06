@@ -1,11 +1,3 @@
-## Flask Rest API 
+## Advanced Rest API Flask
 
-Using: 
- - Flask-RESTful
- - Flask-SQLAlchemy (sqlite)
- - JWT
- - FLASK_JWT_EXTENDED
-   - Blacklist
-   - Revoked token
-   - Expired token
-   - Invalid token
+Note - this repo is based and extends rest_api_flask repo
