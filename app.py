@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 # from flask_jwt import JWT
 from flask_jwt_extended import JWTManager
+from marshmallow import ValidationError
 
 # from security import authenticate, identity
 
@@ -30,6 +31,10 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
+
+@app.errorhandler(ValidationError)
+def handle_marshmallow_validation(err):
+    return jsonify(err.messages), 400
 
 # # JWT creates a new endpoint -> /auth
 # jwt = JWT(app, authenticate, identity)
