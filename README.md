@@ -7,6 +7,9 @@ Note - this repo is based and extends rest_api_flask repo
 - Marshmallow
 
 
+######Remember:
+- @app.errorhandler(ValidationError)
+
 Deleted decorators:
  - @jwt.user_claims_loader
  - @jwt.token_in_blacklist_loader
