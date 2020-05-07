@@ -4,6 +4,9 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 # from security import authenticate, identity
+
+from db import db
+from ma import ma
 from blacklist import BLACKLIST
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
 from resources.item import Item, ItemList
@@ -34,6 +37,11 @@ def create_tables():
 jwt = JWTManager(app)  # not creating /auth endpoint
 
 
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(dycrypted_token):
+    return dycrypted_token.get('jti') in BLACKLIST
+
+
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
 api.add_resource(Item, '/item/<string:name>')
@@ -45,6 +53,7 @@ api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
 
 if __name__ == '__main__':
-    from db import db
+
     db.init_app(app)
+    ma.init_app(app)
     app.run(host='0.0.0.0', port=5000, debug=True)

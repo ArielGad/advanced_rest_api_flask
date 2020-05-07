@@ -32,14 +32,14 @@ class UserRegister(Resource):
     @classmethod
     def post(cls):
         try:
-            data = user_schema.load(request.get_json())
+            # data = user_schema.load(request.get_json())  # THIS IS IN VANILA MARSHMALLOW
+            user = user_schema.load(request.get_json())  # in flask_marshmallow, it is created a user model object
         except ValidationError as err:
             return err.messages, 400
 
-        if UserModel.find_by_username(data['username']):
+        if UserModel.find_by_username(user.username):
             return {'message': USER_ALREADY_EXISTS}, 400
 
-        user = UserModel(**data)
         user.save_to_db()
         return {'message': CREATED_SUCCESSFULLY}, 201
 
@@ -65,15 +65,15 @@ class UserLogin(Resource):
     @classmethod
     def post(cls):
         try:
-            data = user_schema.load(request.get_json())
+            user_data = user_schema.load(request.get_json())
         except ValidationError as err:
             return err.messages, 400
 
         # find user in database
-        user = UserModel.find_by_username(data.get('username'))
+        user = UserModel.find_by_username(user_data.username)
 
         # check password and create tokens
-        if user and safe_str_cmp(user.password, data.get('password')):
+        if user and safe_str_cmp(user.password, user_data.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {
