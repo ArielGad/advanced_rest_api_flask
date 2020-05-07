@@ -6,15 +6,16 @@ from flask_jwt_extended import (
     jwt_required,
     get_raw_jwt
 )
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, request
 from werkzeug.security import safe_str_cmp
+from marshmallow import ValidationError
 
 
 from models.user import UserModel
+from schemas.user import UserSchema
 from blacklist import BLACKLIST
 
 
-BLANK_ERROR = "'{}' cannot be blank"
 CREATED_SUCCESSFULLY = 'User created successfully'
 INVALID_CREDENTIALS = 'Invalid credentials'
 SUCCESSFULLY_LOGGED_OUT = 'User <id={}> successfully logged out.'
@@ -23,16 +24,17 @@ USER_DELETED = 'User deleted.'
 USER_NOT_FOUND = 'User not found'
 
 
-_user_parser = reqparse.RequestParser()
-_user_parser.add_argument('username', type=str, required=True, help=BLANK_ERROR.format('username'))
-_user_parser.add_argument('password', type=str, required=True, help=BLANK_ERROR.format('password'))
+user_schema = UserSchema()
 
 
 class UserRegister(Resource):
 
     @classmethod
     def post(cls):
-        data = _user_parser.parse_args()
+        try:
+            data = user_schema.load(request.get_json())
+        except ValidationError as err:
+            return err.messages, 400
 
         if UserModel.find_by_username(data['username']):
             return {'message': USER_ALREADY_EXISTS}, 400
@@ -48,7 +50,7 @@ class User(Resource):
         user = UserModel.find_by_id(user_id)
         if not user:
             return {'message': USER_NOT_FOUND}, 404
-        return user.json()
+        return user_schema.dump(user), 200
 
     @classmethod
     def delete(cls, user_id: int):
@@ -62,8 +64,10 @@ class User(Resource):
 class UserLogin(Resource):
     @classmethod
     def post(cls):
-        # get data from parser
-        data = _user_parser.parse_args()
+        try:
+            data = user_schema.load(request.get_json())
+        except ValidationError as err:
+            return err.messages, 400
 
         # find user in database
         user = UserModel.find_by_username(data.get('username'))
