@@ -17,7 +17,7 @@ from blacklist import BLACKLIST
 BLANK_ERROR = "'{}' cannot be blank"
 CREATED_SUCCESSFULLY = 'User created successfully'
 INVALID_CREDENTIALS = 'Invalid credentials'
-SUCCESSFULLY_LOGGED_OUT = 'User <id={user_id}> successfully logged out.'
+SUCCESSFULLY_LOGGED_OUT = 'User <id={}> successfully logged out.'
 USER_ALREADY_EXISTS = 'A user with username is already exists'
 USER_DELETED = 'User deleted.'
 USER_NOT_FOUND = 'User not found'
@@ -84,7 +84,7 @@ class UserLogout(Resource):
     @classmethod
     @jwt_required
     def post(cls):
-        jti = get_raw_jwt('jti')  # jti is "JWT ID", a unique identifier for a JWT
+        jti = get_raw_jwt().get('jti')  # jti is "JWT ID", a unique identifier for a JWT
         user_id = get_jwt_identity()
         BLACKLIST.add(jti)
         return {'message': SUCCESSFULLY_LOGGED_OUT.format(user_id)}, 200
