@@ -2,8 +2,9 @@
 
 Note - this repo is based and extends rest_api_flask repo
 
-
--- Type hints (complex)
+######Packages in use:
+- Type hints (complex)
+- Marshmallow
 
 
 Deleted decorators:
