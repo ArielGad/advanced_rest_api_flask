@@ -1,3 +1,5 @@
+import traceback
+
 from flask import make_response, render_template
 from flask_jwt_extended import (
     create_access_token,
@@ -16,14 +18,16 @@ from schemas.user import UserSchema
 from blacklist import BLACKLIST
 
 
-CREATED_SUCCESSFULLY = 'User created successfully'
+CREATED_SUCCESSFULLY = 'User created successfully, email was sent'
 INVALID_CREDENTIALS = 'Invalid credentials'
 SUCCESSFULLY_LOGGED_OUT = 'User <id={}> successfully logged out.'
 USER_ALREADY_EXISTS = 'A user with username is already exists'
+EMAIL_ALREADY_EXISTS = 'A user with email is already exists'
 USER_DELETED = 'User deleted.'
 USER_NOT_FOUND = 'User not found'
 NOT_CONFIRMED_ERROR = 'You have not confirmed registration, please check your email <{}>'
 USER_CONFIRMED = 'Confirmed'
+FAILED_TO_CREATE = 'Internal server error'
 
 
 user_schema = UserSchema()
@@ -40,8 +44,16 @@ class UserRegister(Resource):
         if UserModel.find_by_username(user.username):
             return {'message': USER_ALREADY_EXISTS}, 400
 
-        user.save_to_db()
-        return {'message': CREATED_SUCCESSFULLY}, 201
+        if UserModel.find_by_email(user.username):
+            return {'message': EMAIL_ALREADY_EXISTS}, 400
+
+        try:
+            user.save_to_db()
+            user.send_confirmation_email()
+            return {'message': CREATED_SUCCESSFULLY}, 201
+        except:
+            traceback.print_exc()
+            return {'message': FAILED_TO_CREATE}, 500
 
 
 class User(Resource):
@@ -64,7 +76,7 @@ class User(Resource):
 class UserLogin(Resource):
     @classmethod
     def post(cls):
-        user_data = user_schema.load(request.get_json())
+        user_data = user_schema.load(request.get_json(), partial=('email', ))  # ignore email field if not present
 
         # find user in database
         user = UserModel.find_by_username(user_data.username)
@@ -99,7 +111,6 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)  # fresh=True means cred were just sent
         return {'access_token': new_token}, 200
-
 
 
 class UserConfirm(Resource):
