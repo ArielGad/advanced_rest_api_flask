@@ -9,7 +9,7 @@ from marshmallow import ValidationError
 from db import db
 from ma import ma
 from blacklist import BLACKLIST
-from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
+from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout, UserConfirm
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -39,6 +39,7 @@ def handle_marshmallow_validation(err):
 # # JWT creates a new endpoint -> /auth
 # jwt = JWT(app, authenticate, identity)
 
+
 jwt = JWTManager(app)  # not creating /auth endpoint
 
 
@@ -56,6 +57,7 @@ api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
+api.add_resource(UserConfirm, '/user_confirm/<int:user_id>')
 
 if __name__ == '__main__':
 

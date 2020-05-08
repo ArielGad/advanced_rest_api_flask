@@ -6,7 +6,9 @@ class UserSchema(ma.ModelSchema):  # according to User model
     class Meta:
         model = UserModel
         load_only = ('password',)  # don't show pass while dump from OBJ to dict
-        dump_only = ('id', )  # not mandatory, just declare that id is created in OBJ process, i.e. when loading there is no id
+        dump_only = ('id', 'activated')  # not mandatory, just declare that id is created in OBJ process, i.e. when loading there is no id
+
+
 
 
 
