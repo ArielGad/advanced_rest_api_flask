@@ -1,3 +1,4 @@
+from flask import make_response, render_template
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -110,4 +111,5 @@ class UserConfirm(Resource):
 
         user.activated = True
         user.save_to_db()
-        return {'message': USER_CONFIRMED}, 200
+        headers = {'Content-Type': 'text/html'}  # by default the type is Json, and here we send HTML, so we need to declare it as text
+        return make_response(render_template('confirmation_page.html', email=user.username), 200, headers)
