@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify
 from flask_restful import Api
 # from flask_jwt import JWT
@@ -15,10 +17,10 @@ from resources.store import Store, StoreList
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True  # So flask will see flask_jwt errors
-app.secret_key = 'ariel'  # NOTE if I want to keep separate keys -> app.config['JWT_SECRET_KEY]
+app.secret_key = os.environ.get('APP_SECRET_KEY')  # NOTE if I want to keep separate keys -> app.config['JWT_SECRET_KEY]
 
 # app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']  # enable the blacklist for both tokens
