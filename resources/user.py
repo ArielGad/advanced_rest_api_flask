@@ -16,6 +16,7 @@ from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
 from blacklist import BLACKLIST
+from libs.mailgun import MailGunException
 
 
 CREATED_SUCCESSFULLY = 'User created successfully, email was sent'
@@ -34,7 +35,6 @@ user_schema = UserSchema()
 
 
 class UserRegister(Resource):
-
     @classmethod
     def post(cls):
 
@@ -51,6 +51,9 @@ class UserRegister(Resource):
             user.save_to_db()
             user.send_confirmation_email()
             return {'message': CREATED_SUCCESSFULLY}, 201
+        except MailGunException as e:
+            user.delete_from_db()
+            return {'message': str(e)}, 500
         except:
             traceback.print_exc()
             return {'message': FAILED_TO_CREATE}, 500
