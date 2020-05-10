@@ -47,7 +47,3 @@ class UserModel(db.Model):
         text = f'Please click the link to confirm your registration: {link}'
         html = f'<html>Please click on the link to confirm <a>href="{link}"</a>{link}</html>'
         return Mailgun.send_email([self.email], subject, text, html)
-
-
-
-
