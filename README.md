@@ -5,6 +5,7 @@ Note - this repo is based and extends rest_api_flask repo
 ######Packages in use:
 - Type hints (complex)
 - Marshmallow
+- Flask-Uploads
 - Mailgun (site)
 
 
