@@ -12,6 +12,7 @@ Note - this repo is based and extends rest_api_flask repo
 ######Remember:
 - 
 @app.errorhandler(ValidationError)
+Custom Marshmallow field -> FileStorageField
 
 Deleted decorators:
  - @jwt.user_claims_loader
