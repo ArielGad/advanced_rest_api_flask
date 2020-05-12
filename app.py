@@ -4,6 +4,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
 from dotenv import load_dotenv
+from flask_uploads import configure_uploads, patch_request_class
 
 # from security import authenticate, identity
 
@@ -14,12 +15,17 @@ from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogo
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.confirmation import Confirmation, ConfirmationByUser
+from resources.image import ImageUpload
+from libs.image_helper import IMAGE_SET
 
 
 app = Flask(__name__)
 load_dotenv('.env', verbose=True)
 app.config.from_object('default_config')
 app.config.from_envvar('APPLICATION_SETTINGS')  # note that, this step do not delete app.config.from_object, but only overrides existing values
+
+patch_request_class(app, 10 * 1024 * 1024)  # 10M max size upload
+configure_uploads(app, IMAGE_SET)
 
 api = Api(app)
 
@@ -56,6 +62,7 @@ api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
 api.add_resource(Confirmation, '/user_confirmation/<string:confirmation_id>')
 api.add_resource(ConfirmationByUser, '/confirmation/user/<int:user_id>')
+api.add_resource(ImageUpload, '/upload/image')
 
 if __name__ == '__main__':
 

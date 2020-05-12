@@ -13,7 +13,5 @@ JWT_BLACKLIST_TOKEN_CHECKS = [
     "refresh",
 ]  # allow blacklisting for access and refresh tokens
 
-
-
 UPLOADED_IMAGES_DEST = os.path.join("static", "images")  # manage root folder
 
