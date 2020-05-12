@@ -64,3 +64,4 @@ class UserLogin(Resource):
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
 
         return {"message": gettext("user_invalid_credentials")}, 401
+
