@@ -4,13 +4,14 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
-
+from flask_migrate import Migrate
 from db import db
 from ma import ma
 from resources.user import UserRegister, UserLogin, User
-
+import dotenv
 
 app = Flask(__name__)
+dotenv.load_dotenv('.env')
 app.config["DEBUG"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URI", "sqlite:///data.db"
@@ -39,4 +40,4 @@ api.add_resource(UserLogin, "/login")
 if __name__ == "__main__":
     db.init_app(app)
     ma.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
