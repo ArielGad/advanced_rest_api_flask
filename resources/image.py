@@ -79,7 +79,6 @@ class Image(Resource):
             return {"message": gettext("image_delete_failed")}, 500
 
 
-
 class AvatarUpload(Resource):
     @jwt_required
     def put(self):
@@ -109,3 +108,17 @@ class AvatarUpload(Resource):
         except UploadNotAllowed:  # forbidden file type
             extension = image_helper.get_extension(data["image"])
             return {"message": gettext("image_illegal_extension").format(extension)}, 400
+
+
+class Avatar(Resource):
+    @classmethod
+    def get(cls, user_id: int):
+        """
+        This endpoint returns the avatar of the user specified by user_id.
+        """
+        folder = "avatars"
+        filename = f"user_{user_id}"
+        avatar = image_helper.find_image_any_format(filename, folder)
+        if avatar:
+            return send_file(avatar)
+        return {"message": gettext("avatar_not_found")}, 404
