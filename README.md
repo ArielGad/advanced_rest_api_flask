@@ -6,6 +6,8 @@ Note - this repo is based and extends rest_api_flask repo
 - Type hints (complex)
 - Marshmallow
 - Flask-Uploads
+- Flask-Migrate
+- Alembic
 - Mailgun (site)
 
 
