@@ -22,6 +22,8 @@ app.secret_key = "jose"
 api = Api(app)
 jwt = JWTManager(app)
 
+migrate = Migrate(app, db)
+
 
 @app.before_first_request
 def create_tables():
