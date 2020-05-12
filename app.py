@@ -15,7 +15,7 @@ from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogo
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.confirmation import Confirmation, ConfirmationByUser
-from resources.image import ImageUpload
+from resources.image import ImageUpload, Image
 from libs.image_helper import IMAGE_SET
 
 
@@ -63,9 +63,10 @@ api.add_resource(TokenRefresh, '/refresh')
 api.add_resource(Confirmation, '/user_confirmation/<string:confirmation_id>')
 api.add_resource(ConfirmationByUser, '/confirmation/user/<int:user_id>')
 api.add_resource(ImageUpload, '/upload/image')
+api.add_resource(Image, '/image/<string:filename>')
 
 if __name__ == '__main__':
 
     db.init_app(app)
     ma.init_app(app)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0')
