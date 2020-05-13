@@ -8,6 +8,7 @@ Note - this repo is based and extends rest_api_flask repo
 - Flask-Uploads
 - Flask-Migrate
 - Alembic
+- Flask-OAuthlib
 - Mailgun (site)
 
 
