@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from db import db
 from ma import ma
+from oa import oauth
 from resources.user import UserRegister, UserLogin, User
 
 
@@ -34,4 +35,5 @@ api.add_resource(UserLogin, "/login")
 if __name__ == "__main__":
     db.init_app(app)
     ma.init_app(app)
-    app.run(port=5000)
+    oauth.init_app(app)
+    app.run(host='0.0.0.0', port=5000)
