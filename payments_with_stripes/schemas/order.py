@@ -1,4 +1,4 @@
-import ma
+from ma import ma
 from models.order import OrderModel
 
 

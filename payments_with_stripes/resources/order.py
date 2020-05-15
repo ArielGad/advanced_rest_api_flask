@@ -15,6 +15,10 @@ order_schema = OrderSchema()
 class Order(Resource):
 
     @classmethod
+    def get(cls):
+        return order_schema.dump(OrderModel.find_all(), many=True), 200
+
+    @classmethod
     def post(cls):
         """
         Expect a token and a list of item ids from the request body.
