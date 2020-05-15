@@ -1,7 +1,11 @@
 import os
+from typing import List
 
 from db import db
-from typing import List
+import stripe
+
+
+CURRENCY = 'usd'
 
 
 class ItemsInOrder(db.Model):  # can be same item, 3 times in a single order
@@ -24,6 +28,23 @@ class OrderModel(db.Model):
 
     items = db.relationship("ItemsInOrder", back_populates="order")
 
+    @property
+    def description(self) -> str:
+        """
+        Generates a simple string representing this order, in the format of "5x chair, 2x table"
+        """
+        item_counts = [f"{item_data.quantity}x {item_data.item.name}" for item_data in self.items]
+        return ",".join(item_counts)
+
+    @property
+    def amount(self) -> int:
+        """
+        Calculates the total amount to charge for this order.
+        Assumes item price is in USD–multi-currency becomes much tricker!
+        :return int: total amount of cents to be charged in this order.x`
+        """
+        return int(sum([item_data.item.price * item_data.quantity for item_data in self.items]) * 100)
+
     @classmethod
     def find_all(cls) -> List["OrderModel"]:
         return cls.query.all()
@@ -31,6 +52,16 @@ class OrderModel(db.Model):
     @classmethod
     def find_by_id(cls, _id: int) -> "OrderModel":
         return cls.query.filter_by(id=_id).first()
+
+    def charge_with_strip(self, token: str) -> stripe.Charge:
+        stripe.api_key = os.getenv('STRIPE_API_KEY')
+
+        return stripe.Charge.create(
+            amount=self.amount,  # amount of cents
+            currency=CURRENCY,
+            description=self.description,
+            source=token
+        )
 
     def set_status(self, new_status: str) -> None:
         """
