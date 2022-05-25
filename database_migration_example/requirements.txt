@@ -22,7 +22,7 @@ marshmallow==3.0.0b16
 marshmallow-sqlalchemy==0.14.1
 pathspec==0.8.0
 psycopg2==2.8.5
-PyJWT==1.7.1
+PyJWT==2.4.0
 python-dateutil==2.8.1
 python-dotenv==0.13.0
 python-editor==1.0.4
